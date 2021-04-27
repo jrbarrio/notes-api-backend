@@ -7,7 +7,8 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "start": "NODE_ENV=production node index.js",
-    "test": "NODE_ENV=test jest --verbose --silent"
+    "test": "NODE_ENV=test jest --verbose --silent tests/notes.test.js",
+    "test:watch": "npm run test -- --watch"
   },
   "keywords": [],
   "author": "",
