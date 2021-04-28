@@ -5,8 +5,12 @@ require('./mongo')
 const express = require('express')
 const Sentry = require('@sentry/node')
 const Tracing = require('@sentry/tracing')
-
 const app = express()
+const logger = require('./middleware/logger')
+const notFound = require('./middleware/notFound')
+const handleError = require('./middleware/handleError')
+const Note = require('./models/Note')
+const userRouter = require('./controllers/users')
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -22,12 +26,6 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0
 })
-
-const logger = require('./middleware/logger')
-const notFound = require('./middleware/notFound')
-const handleError = require('./middleware/handleError')
-
-const Note = require('./models/Note')
 
 // RequestHandler creates a separate execution context using domains, so that every
 // transaction/span/breadcrumb is attached to its own Hub instance
@@ -114,6 +112,8 @@ app.post('/api/notes', async (request, response, next) => {
     next(error)
   }
 })
+
+app.use('/api/users', userRouter)
 
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())

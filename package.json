@@ -7,7 +7,7 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "start": "NODE_ENV=production node index.js",
-    "test": "NODE_ENV=test jest --verbose --silent tests/notes.test.js",
+    "test": "NODE_ENV=test PORT=3002 jest --verbose --silent tests/users.test.js",
     "test:watch": "npm run test -- --watch"
   },
   "keywords": [],
@@ -26,6 +26,7 @@
   "dependencies": {
     "@sentry/node": "^6.3.1",
     "@sentry/tracing": "^6.3.1",
+    "bcrypt": "^5.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.12.5"
