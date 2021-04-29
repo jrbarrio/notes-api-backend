@@ -15,11 +15,15 @@ userRouter.post('/', async (request, response) => {
     passwordHash
   })
 
-  const savedUSer = await user.save()
+  try {
+    const savedUSer = await user.save()
 
-  response
-    .status(201)
-    .json(savedUSer)
+    response
+      .status(201)
+      .json(savedUSer)
+  } catch (error) {
+    response.status(400).json({ error })
+  }
 })
 
 module.exports = userRouter
