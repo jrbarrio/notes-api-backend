@@ -1,11 +1,14 @@
 POST http://localhost:3001/api/notes HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwOGQxZjQ5YjMyNGNjMjRjYmJiZTM2YiIsInVzZXJuYW1lIjoicGVwMiIsImlhdCI6MTYxOTg3MzE0MH0.Z2xUnkgkObYIE22UpQymmezTCh6i9h4qEb4s_FtzOOc
+
 
 {
     "content": "Lo que sea",
     "important": true,
     "userId": "6089b9087601f820738e66c8"  
 }
+
 
 ###
 

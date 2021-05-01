@@ -7,3 +7,8 @@ const connectionString = NODE_ENV === 'test' ? MONGO_DB_URI_TEST : MONGO_DB_URI
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Database connected'))
   .catch(() => console.error('Error connecting database'))
+
+process.on('uncaughtException', error => {
+  console.error(error)
+  mongoose.disconnect()
+})

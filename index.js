@@ -11,7 +11,9 @@ const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
 const Note = require('./models/Note')
 const userRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 const User = require('./models/User')
+const userExtractor = require('./middleware/userExtractor')
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -66,7 +68,7 @@ app.get('/api/notes/:id', (request, response, next) => {
   })
 })
 
-app.delete('/api/notes/:id', async (request, response, next) => {
+app.delete('/api/notes/:id', userExtractor, async (request, response, next) => {
   const id = request.params.id
 
   try {
@@ -77,7 +79,7 @@ app.delete('/api/notes/:id', async (request, response, next) => {
   }
 })
 
-app.put('/api/notes/:id', (request, response, next) => {
+app.put('/api/notes/:id', userExtractor, (request, response, next) => {
   const id = request.params.id
 
   const note = request.body
@@ -94,14 +96,13 @@ app.put('/api/notes/:id', (request, response, next) => {
   })
 })
 
-app.post('/api/notes', async (request, response, next) => {
+app.post('/api/notes', userExtractor, async (request, response, next) => {
   const {
     content,
-    important,
-    userId
+    important
   } = request.body
 
-  const user = await User.findById(userId)
+  const user = await User.findById(request.userId)
 
   console.log(user)
 
@@ -132,6 +133,7 @@ app.post('/api/notes', async (request, response, next) => {
 })
 
 app.use('/api/users', userRouter)
+app.use('/api/login', loginRouter)
 
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())
