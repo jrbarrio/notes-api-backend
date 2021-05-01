@@ -11,6 +11,7 @@ const notFound = require('./middleware/notFound')
 const handleError = require('./middleware/handleError')
 const Note = require('./models/Note')
 const userRouter = require('./controllers/users')
+const User = require('./models/User')
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -43,7 +44,11 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', async (request, response) => {
-  const notes = await Note.find({})
+  const notes = await Note.find({}).populate('user', {
+    username: 1,
+    name: 1,
+    _id: 0
+  })
   response.json(notes)
 })
 
@@ -90,9 +95,17 @@ app.put('/api/notes/:id', (request, response, next) => {
 })
 
 app.post('/api/notes', async (request, response, next) => {
-  const note = request.body
+  const {
+    content,
+    important,
+    userId
+  } = request.body
 
-  if (!note || !note.content) {
+  const user = await User.findById(userId)
+
+  console.log(user)
+
+  if (!content) {
     response.status(400).json({
       message: 'note.content is missing'
     })
@@ -100,13 +113,18 @@ app.post('/api/notes', async (request, response, next) => {
   }
 
   const newNote = new Note({
-    content: note.content,
+    content: content,
     date: new Date(),
-    important: typeof note.important === 'boolean' ? note.important : false
+    important: typeof mportant === 'boolean' ? important : false,
+    user: user.toJSON().id
   })
 
   try {
     const savedNote = await newNote.save()
+
+    user.notes = user.notes.concat(savedNote._id)
+    await user.save()
+
     response.status(201).json(savedNote)
   } catch (error) {
     next(error)
