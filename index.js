@@ -3,6 +3,7 @@ require('dotenv').config()
 require('./mongo')
 
 const express = require('express')
+const cors = require('cors')
 const Sentry = require('@sentry/node')
 const Tracing = require('@sentry/tracing')
 const app = express()
@@ -14,6 +15,10 @@ const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const User = require('./models/User')
 const userExtractor = require('./middleware/userExtractor')
+
+app.use(cors())
+app.use(express.json())
+app.use('/images', express.static('images'))
 
 Sentry.init({
   dsn: process.env.SENTRY_DNS,
@@ -35,9 +40,6 @@ Sentry.init({
 app.use(Sentry.Handlers.requestHandler())
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler())
-
-app.use(express.json())
-app.use('/images', express.static('images'))
 
 app.use(logger)
 
