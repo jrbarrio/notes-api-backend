@@ -13,6 +13,7 @@ const handleError = require('./middleware/handleError')
 const Note = require('./models/Note')
 const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+const testingRouter = require('./controllers/testing')
 const User = require('./models/User')
 const userExtractor = require('./middleware/userExtractor')
 
@@ -136,6 +137,10 @@ app.post('/api/notes', userExtractor, async (request, response, next) => {
 
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
+
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/testing', testingRouter)
+}
 
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler())
